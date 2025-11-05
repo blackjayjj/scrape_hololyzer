@@ -13,35 +13,27 @@ on:
 
 jobs:
   run_deno_script:
-    # Use the latest stable version of Ubuntu
     runs-on: ubuntu-latest
+    
+    # Define the custom path for the entire job.
     env:
       PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+
     steps:
-      # Step 1: Checkout the repository code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Cache Playwright Browsers
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
-          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('deno.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-browsers-
-
-      - name: Setup Deno
+      - name: Setup Deno (v2.x)
         uses: denoland/setup-deno@v1
         with:
           deno-version: v2.x
 
-      # Step 3: Run the Deno script using environment variables
-      # We pass the secrets directly as environment variables, which Deno can read.
+      - name: Install Playwright Browsers
+        run: deno run --allow-run npm:playwright@latest install chromium
+
       - name: Run Scraper Script
         run: deno run --allow-all main.ts
         env:
-          # These environment variables map to the secrets you will define on GitHub
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
-          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
