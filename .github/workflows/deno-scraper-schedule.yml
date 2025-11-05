@@ -15,7 +15,8 @@ jobs:
   run_deno_script:
     # Use the latest stable version of Ubuntu
     runs-on: ubuntu-latest
-
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout Repository
@@ -26,6 +27,7 @@ jobs:
         uses: denoland/setup-deno@v1
         with:
           deno-version: v2.x
+          cache: true
 
       # Step 3: Run the Deno script using environment variables
       # We pass the secrets directly as environment variables, which Deno can read.
