@@ -29,7 +29,7 @@ jobs:
           deno-version: v2.x
 
       - name: Install Playwright Browsers
-        run: deno run --allow-run --allow-env npm:playwright@latest install chromium
+        run: deno run --allow-run --allow-env --allow-sys npm:playwright@latest install chromium
 
       - name: Run Scraper Script
         run: deno run --allow-all main.ts
