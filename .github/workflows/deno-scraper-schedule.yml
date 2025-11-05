@@ -22,12 +22,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Set up the Deno environment
+      - name: Cache Playwright Browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('deno.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-
+
       - name: Setup Deno
         uses: denoland/setup-deno@v1
         with:
           deno-version: v2.x
-          cache: true
 
       # Step 3: Run the Deno script using environment variables
       # We pass the secrets directly as environment variables, which Deno can read.
