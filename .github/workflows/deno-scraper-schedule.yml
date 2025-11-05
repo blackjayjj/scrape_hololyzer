@@ -1,0 +1,37 @@
+name: Daily Deno Scraper
+
+# This workflow is triggered on a daily schedule and manually via the GitHub Actions UI.
+on:
+  # Schedule: Runs every day at 00:00 UTC (Midnight UTC). 
+  # You can adjust the cron string if you need a different time.
+  schedule:
+    # Syntax: minute hour day_of_month month day_of_week
+    - cron: '0 0 * * *'
+  
+  # Allows for manual triggering of the workflow from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  run_deno_script:
+    # Use the latest stable version of Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up the Deno environment
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      # Step 3: Run the Deno script using environment variables
+      # We pass the secrets directly as environment variables, which Deno can read.
+      - name: Run Scraper Script
+        run: deno run --allow-all main.ts
+        env:
+          # These environment variables map to the secrets you will define on GitHub
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
