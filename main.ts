@@ -1,5 +1,6 @@
 import { chromium, Page } from "playwright";
 import { supabase } from "./db_actions.ts";
+import { deleteOldVideos, cacheVideos } from "./scripts.ts";
 
 interface VideoData {
   videoId: string;
@@ -223,6 +224,7 @@ async function scrapeSuperchatData(page: Page, url: string, videoId: string) {
 }
 
 async function runScraper() {
+  await deleteOldVideos();
   const { data } = await supabase.from("scraped_videos").select();
   const scrapedIds = data?.map((obj) => obj.id) || [];
   const browser = await chromium.launch({
@@ -281,6 +283,7 @@ async function runScraper() {
     }
   }
   await browser.close();
+  await cacheVideos()
 }
 
 if (import.meta.main) {
