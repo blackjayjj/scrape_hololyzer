@@ -109,13 +109,7 @@ export async function getAllVideoIds() {
 }
 
 export async function getCachedVideoIds() {
-    const { data, error } = await supabase
-    .from("video_cache")
-    .select("*")
-    .limit(1) 
-    .maybeSingle()
-    return data
-  // const { data, error } = await supabase.from("video_cache").select("id");
+  const { data, error } = await supabase.from("video_cache").select("id");
 
   if (error) {
     throw new Error(error);
@@ -123,7 +117,7 @@ export async function getCachedVideoIds() {
   return data;
 }
 
-async function cacheVideos() {
+export async function cacheVideos() {
   const allVideoIds = (await getAllVideoIds()).map((obj) => obj.id);
   const alreadyCachedVideoIds = (await getCachedVideoIds()).map(
     (obj) => obj.id
